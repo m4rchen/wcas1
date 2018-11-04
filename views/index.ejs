@@ -55,7 +55,11 @@
                                 var month = now.getMonth()+1;
                                 var day = now.getDate();
                                 var today = year + '-' + month + '-' + day;
-                                if (today > todo[i].date) { %>
+                                
+                                if (!todo[i].date) {
+                                    console.log("no date");
+                                }
+                                else if (today > todo[i].date) { %>
                                 <p class="text-danger">EXPIRED</p>
                                 <% } %>
 

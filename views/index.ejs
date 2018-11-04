@@ -1,0 +1,196 @@
+<html>
+
+<head>
+    <title> ToDo App </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+        integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU"
+        crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container center">
+        <div class="row">
+            <h2> A Simple ToDo List App </h2>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">Open
+                modal for Add Task</button>
+
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Comment</th>
+                        <th>Priority</th>
+                        <th>Date</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <form method="POST">
+                        <% for (var i=0; i < todo.length; i++) { %>
+                        <tr>
+                            <td>
+                                <%= todo[i].task %>
+                                <%
+                                var now = new Date();
+                                var year = now.getFullYear();
+                                var month = now.getMonth()+1;
+                                var day = now.getDate();
+                                var today = year + '-' + month + '-' + day;
+                                if (today > todo[i].date) { %>
+                                <p class="text-danger">EXPIRED</p>
+                                <% } %>
+
+                                </p>
+                            </td>
+                            <td>
+                                <%= todo[i].comment %>
+                            </td>
+                            <td>
+                                <%= todo[i].priority %>
+                            </td>
+                            <td>
+                                <%= todo[i].date %>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal"
+                                    data-num="<%=i%>" data-task="<%=todo[i].task%>" data-comment="<%=todo[i].comment%>"
+                                    data-priority="<%=todo[i].priority%>" data-date="<%=todo[i].date%>">Modify</button>
+                                    <button type="submit" formaction="/removeTask" class="btn btn-success" name="removenum"
+                                    value="<%=i%>">Done</button>
+                                <button type="submit" formaction="/removeTask" class="btn btn-danger" name="removenum"
+                                    value="<%=i%>">Remove</button>
+                            </td>
+                        </tr>
+                        <% } %>
+
+                    </form>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addModalLabel">New Task</h4>
+                </div>
+
+                <form id="addForm" action="/addTask" method="POST">
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="task" class="control-label">Task:</label>
+                            <input type="text" class="form-control" id="task" name="newTask">
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">Comment:</label>
+                            <textarea class="form-control" id="comment" name="newComment"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority" class="control-label">Priority:</label>
+                            <select class="form-control" id="priority" name="newPriority">
+                                <option>1. Critical</option>
+                                <option>2. Major</option>
+                                <option>3. Minor</option>
+                                <option>4. Unhandled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date" class="control-label">Date:</label>
+                            <input type="date" class="form-control" id="date" name="newDate">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="editModalLabel">Edit Task</h4>
+                </div>
+
+                <form id="editForm" action="/editTask" method="POST">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="task" class="control-label">Task:</label>
+                            <input type="text" class="form-control" id="task" name="editTask">
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="control-label">Comment:</label>
+                            <textarea class="form-control" id="comment" name="editComment"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority" class="control-label">Priority:</label>
+                            <select class="form-control" id="priority" name="editPriority">
+                                <option>1. Critical</option>
+                                <option>2. Major</option>
+                                <option>3. Minor</option>
+                                <option>4. Unhandled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date" class="control-label">Date:</label>
+                            <input type="date" class="form-control" id="date" name="editDate">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-info" name="editnum" id="editnum" value="">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var editNum = button.data('num');
+        var editTask = button.data('task');
+        var editComment = button.data('comment');
+        var editPriority = button.data('priority');
+        var editDate = button.data('date');
+
+        var modal = $(this);
+        modal.find('#task').val(editTask);
+        modal.find('#comment').val(editComment);
+        modal.find('#priority').val(editPriority);
+        modal.find('#date').val(editDate);
+        modal.find('#editnum').val(editNum);
+    });
+</script>
+
+</html>
